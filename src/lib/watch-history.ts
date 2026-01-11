@@ -1,24 +1,25 @@
-import { WatchHistory } from "@/types/watch-history";
+import { History } from "@/types/history";
 
-const KEY = "dramabox_watch_history";
+const KEY = "dramabox_history";
 
-export const getWatchHistory = (): WatchHistory[] => {
+export const getHistory = (): History[] => {
   if (typeof window === "undefined") return [];
   return JSON.parse(localStorage.getItem(KEY) || "[]");
 };
 
-export const addWatchHistory = (item: WatchHistory) => {
+export const saveHistory = (data: History) => {
   if (typeof window === "undefined") return;
 
-  const history = getWatchHistory();
+  const list = getHistory();
 
-  const filtered = history.filter(h => h.id !== item.id);
+  // 1 drama = 1 history
+  const filtered = list.filter(item => item.dramaId !== data.dramaId);
 
-  const updated = [item, ...filtered].slice(0, 50);
+  const updated = [data, ...filtered].slice(0, 50);
 
   localStorage.setItem(KEY, JSON.stringify(updated));
 };
 
-export const clearWatchHistory = () => {
+export const clearHistory = () => {
   localStorage.removeItem(KEY);
 };
