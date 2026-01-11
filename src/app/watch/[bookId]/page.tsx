@@ -86,17 +86,19 @@ export default function WatchPage() {
   }, [episodes, currentEpisode]);
 
   /* ===== SIMPAN HISTORY (AUTO) ===== */
-  useEffect(() => {
-    if (!book || !currentEpisodeData) return;
+useEffect(() => {
+  if (!book || !currentEpisodeData) return;
 
-    saveHistory({
-      dramaId: book.bookId,
-      title: book.bookName,
-      poster: currentEpisodeData.chapterImg,
-      episode: currentEpisode,
-      updatedAt: Date.now(),
-    });
-  }, [book, currentEpisode, currentEpisodeData]);
+  saveHistory({
+    dramaId: book.bookId,
+    slug: book.bookId, // ✅ FIX DI SINI
+    title: book.bookName,
+    poster: currentEpisodeData.chapterImg,
+    episode: currentEpisode,
+    updatedAt: Date.now(),
+  });
+}, [book, currentEpisode, currentEpisodeData]);
+
 
   /* ===== CDN & QUALITY ===== */
   const defaultCdn = useMemo(() => {
