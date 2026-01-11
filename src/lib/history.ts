@@ -23,7 +23,7 @@ export function saveHistory(item: History) {
   if (typeof window === "undefined") return;
 
   const list = getHistory().filter(
-    (h) => !(h.dramaId === item.dramaId)
+    (h) => h.dramaId !== item.dramaId
   );
 
   list.unshift(item);
