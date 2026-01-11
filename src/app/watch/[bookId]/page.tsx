@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { saveHistory } from "@/lib/history";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useDramaDetail, useEpisodes } from "@/hooks/useDramaDetail";
@@ -22,6 +24,23 @@ function isDirectFormat(data: unknown): data is DramaDetailDirect {
 // Helper to check if response is legacy format
 function isLegacyFormat(data: unknown): data is DramaDetailResponseLegacy {
   return data !== null && typeof data === 'object' && 'data' in data && (data as DramaDetailResponseLegacy).data?.book !== undefined;
+}
+
+export default function WatchPage({ params }: any) {
+  const episode = Number(params.episode);
+
+  useEffect(() => {
+    saveHistory({
+      dramaId: drama.id,
+      slug: drama.slug,
+      title: drama.title,
+      poster: drama.poster,
+      episode,
+      updatedAt: Date.now(),
+    });
+  }, [episode]);
+
+  return <>PLAYER</>;
 }
 
 const EPISODES_PER_PAGE = 30;
