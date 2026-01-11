@@ -36,3 +36,18 @@ export function useEpisodes(bookId: string) {
     staleTime: 1000 * 60 * 5,
   });
 }
+
+"use client";
+
+import { addWatchHistory } from "@/lib/watch-history";
+
+const handlePlay = () => {
+  addWatchHistory({
+    id: drama.id,
+    title: drama.title,
+    slug: drama.slug,
+    poster: drama.poster,
+    episode: currentEpisode,
+    watchedAt: Date.now(),
+  });
+};
