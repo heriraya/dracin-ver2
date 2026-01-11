@@ -1,25 +1,40 @@
-import { History } from "@/types/history";
+export type History = {
+  dramaId: string;
+  slug: string;
+  title: string;
+  poster: string;
+  episode: number;
+  updatedAt: number;
+};
 
 const KEY = "dramabox_history";
+const LIMIT = 20;
 
-export const getHistory = (): History[] => {
+export function getHistory(): History[] {
   if (typeof window === "undefined") return [];
-  return JSON.parse(localStorage.getItem(KEY) || "[]");
-};
+  try {
+    return JSON.parse(localStorage.getItem(KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
 
-export const saveHistory = (data: History) => {
+export function saveHistory(item: History) {
   if (typeof window === "undefined") return;
 
-  const list = getHistory();
+  const list = getHistory().filter(
+    (h) => !(h.dramaId === item.dramaId)
+  );
 
-  // 1 drama = 1 history
-  const filtered = list.filter(item => item.dramaId !== data.dramaId);
+  list.unshift(item);
 
-  const updated = [data, ...filtered].slice(0, 50);
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(list.slice(0, LIMIT))
+  );
+}
 
-  localStorage.setItem(KEY, JSON.stringify(updated));
-};
-
-export const clearHistory = () => {
+export function clearHistory() {
+  if (typeof window === "undefined") return;
   localStorage.removeItem(KEY);
-};
+}
