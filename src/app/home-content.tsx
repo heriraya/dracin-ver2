@@ -10,7 +10,7 @@ export default function HomeContent() {
   return (
     <main className="min-h-screen">
       <HeroSection
-        title="Untuk Kamu"
+        title="Drama Untuk Kamu"
         description="Drama pilihan yang dipersonalisasi khusus untukmu. Temukan cerita seru yang sesuai selera!"
         icon="sparkles"
       />
