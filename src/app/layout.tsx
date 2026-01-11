@@ -20,35 +20,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="font-sans antialiased">
         <Providers>
-          {/* HEADER */}
           <Suspense fallback={<div className="h-16" />}>
             <Header />
           </Suspense>
 
-          {/* CONTENT */}
-          <main className="pb-20 md:pb-0">
+          {/* 🔽 KONTEN */}
+          <main className="min-h-screen pb-24">
             {children}
           </main>
 
-          {/* DESKTOP FOOTER ONLY */}
-          <div className="hidden md:block">
+          {/* 🔽 DESKTOP FOOTER */}
+          <footer className="hidden md:block">
             <Footer />
-          </div>
+          </footer>
 
-          {/* MOBILE FLOATING FOOTER */}
+          {/* 🔽 MOBILE FLOATING FOOTER */}
           <MobileFooter />
 
-          {/* TOASTERS */}
           <Toaster />
           <Sonner />
         </Providers>
