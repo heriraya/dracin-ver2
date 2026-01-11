@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { WatchHistory } from "@/types/watch-history";
-import { getWatchHistory } from "@/lib/watch-history";
+import { History } from "@/types/history";
+import { getHistory } from "@/lib/history";
 
-export const useWatchHistory = () => {
-  const [history, setHistory] = useState<WatchHistory[]>([]);
+export const useHistory = () => {
+  const [history, setHistory] = useState<History[]>([]);
 
   useEffect(() => {
-    setHistory(getWatchHistory());
+    setHistory(getHistory());
   }, []);
 
   return history;
