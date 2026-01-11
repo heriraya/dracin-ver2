@@ -1,8 +1,8 @@
-export interface WatchHistory {
-  id: string;
-  title: string;
+export interface History {
+  dramaId: string;
   slug: string;
+  title: string;
   poster: string;
-  episode?: string;
-  watchedAt: number;
+  episode: number;
+  updatedAt: number;
 }
