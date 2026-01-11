@@ -13,6 +13,7 @@ const navLinks = [
   { path: "/terbaru", label: "Terbaru" },
   { path: "/terpopuler", label: "Terpopuler" },
   { path: "/sulih-suara", label: "Sulih Suara" },
+  { path: "/history", label: "History" },
 ];
 
 export function Header() {
