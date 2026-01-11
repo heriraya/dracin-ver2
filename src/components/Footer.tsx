@@ -15,7 +15,7 @@ export function Footer() {
             Beranda
           </Link>
           <a
-            href="https://example.com"
+            href="#"
             target="_blank"
             className="flex items-center gap-1 hover:text-foreground"
           >
