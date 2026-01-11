@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { saveHistory } from "@/lib/history";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
