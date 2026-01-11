@@ -3,28 +3,17 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { Search, X, Play, Menu } from "lucide-react";
+import { Search, X, Play } from "lucide-react";
 import { useSearchDramas } from "@/hooks/useDramas";
 import { useDebounce } from "@/hooks/useDebounce";
 
-const navLinks = [
-  { path: "/", label: "Beranda" },
-  { path: "/terbaru", label: "Terbaru" },
-  { path: "/terpopuler", label: "Terpopuler" },
-  { path: "/sulih-suara", label: "Sulih Suara" },
-  { path: "/history", label: "History" },
-];
-
 export function Header() {
-  const pathname = usePathname();
-  const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const debouncedQuery = useDebounce(searchQuery, 300);
   const normalizedQuery = debouncedQuery.trim();
-  const { data: searchResults, isLoading: isSearching } = useSearchDramas(normalizedQuery);
+  const { data: searchResults, isLoading: isSearching } =
+    useSearchDramas(normalizedQuery);
 
   const handleSearchClose = () => {
     setSearchOpen(false);
@@ -45,61 +34,18 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                href={link.path}
-                className={`nav-link ${pathname === link.path ? "active" : ""}`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Search & Mobile Menu */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="p-2.5 rounded-xl hover:bg-muted/50 transition-colors"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl hover:bg-muted/50 transition-colors md:hidden"
-              aria-label="Menu"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
+          {/* Search only */}
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="p-2.5 rounded-xl hover:bg-muted/50 transition-colors"
+            aria-label="Search"
+          >
+            <Search className="w-5 h-5" />
+          </button>
         </div>
-
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-border/50 animate-fade-up">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                href={link.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block py-3 px-2 text-sm font-medium rounded-lg transition-colors ${
-                  pathname === link.path
-                    ? "text-foreground bg-muted/50"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        )}
       </div>
 
-      {/* Search Overlay (Portal) */}
+      {/* Search Overlay */}
       {searchOpen &&
         typeof document !== "undefined" &&
         createPortal(
@@ -150,38 +96,39 @@ export function Header() {
                           loading="lazy"
                         />
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-display font-semibold text-foreground truncate">{drama.bookName}</h3>
+                          <h3 className="font-display font-semibold truncate">
+                            {drama.bookName}
+                          </h3>
                           {drama.protagonist && (
-                            <p className="text-sm text-muted-foreground mt-1 truncate">{drama.protagonist}</p>
+                            <p className="text-sm text-muted-foreground mt-1 truncate">
+                              {drama.protagonist}
+                            </p>
                           )}
                           <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
                             {drama.introduction}
                           </p>
-                          {drama.tagNames && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                              {drama.tagNames.slice(0, 3).map((tag) => (
-                                <span key={tag} className="tag-pill text-[10px]">
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
                         </div>
                       </Link>
                     ))}
                   </div>
                 )}
 
-                {searchResults && searchResults.length === 0 && normalizedQuery && (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">Tidak ada hasil untuk "{normalizedQuery}"</p>
-                  </div>
-                )}
+                {searchResults &&
+                  searchResults.length === 0 &&
+                  normalizedQuery && (
+                    <div className="text-center py-12">
+                      <p className="text-muted-foreground">
+                        Tidak ada hasil untuk "{normalizedQuery}"
+                      </p>
+                    </div>
+                  )}
 
                 {!normalizedQuery && (
                   <div className="text-center py-12">
                     <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-                    <p className="text-muted-foreground">Ketik untuk mencari drama</p>
+                    <p className="text-muted-foreground">
+                      Ketik untuk mencari drama
+                    </p>
                   </div>
                 )}
               </div>
