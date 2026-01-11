@@ -49,32 +49,7 @@ export function Footer() {
           </div>
 
           {/* Legal */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-4">Lainnya</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a 
-                  href="https://lynk.id/sansekai/mxd6j2ezmxoe" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
-                >
-                  Beli Source Code API
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </li>
-              {/* <li>
-                <span className="text-muted-foreground">Kontak</span>
-              </li>
-              <li>
-                <span className="text-muted-foreground">Kebijakan Privasi</span>
-              </li>
-              <li>
-                <span className="text-muted-foreground">Syarat & Ketentuan</span>
-              </li> */}
-            </ul>
-          </div>
-        </div>
+         
 
         {/* Bottom */}
         <div className="border-t border-border/50 mt-8 pt-8">
