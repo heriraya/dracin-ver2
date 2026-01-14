@@ -237,8 +237,30 @@ useEffect(() => {
             </h1>
           </div>
 
-          {/* EPISODE LIST */}
+{/* EPISODE LIST */}
           <div className="bg-muted/30 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm">
+                Episode {startIndex + 1} - {endIndex}
+              </h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                  disabled={currentPage === 0}
+                  className="p-1.5 rounded-lg bg-muted disabled:opacity-50"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={currentPage >= totalPages - 1}
+                  className="p-1.5 rounded-lg bg-muted disabled:opacity-50"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-5 gap-2">
               {currentPageEpisodes.map((ep) => (
                 <button
@@ -254,6 +276,7 @@ useEffect(() => {
                 </button>
               ))}
             </div>
+
           </div>
         </div>
       </div>
