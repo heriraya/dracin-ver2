@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { saveHistory } from "@/lib/history";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useDramaDetail, useEpisodes } from "@/hooks/useDramaDetail";
-import { ChevronLeft, ChevronRight, Loader2, Settings, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Loader2, Settings } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -45,7 +45,6 @@ export default function WatchPage() {
   const [currentEpisode, setCurrentEpisode] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [quality, setQuality] = useState(720);
-  const [showEpisodeList, setShowEpisodeList] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -140,9 +139,7 @@ export default function WatchPage() {
   /* ===== NAVIGASI ===== */
   const handleEpisodeChange = (index: number) => {
     setCurrentEpisode(index);
-    setCurrentPage(Math.floor(index / EPISODES_PER_PAGE));
     router.push(`/watch/${bookId}?ep=${index}`);
-    setShowEpisodeList(false);
   };
 
   const handleVideoEnded = () => {
@@ -188,140 +185,99 @@ export default function WatchPage() {
 
   /* ================= RENDER ================= */
   return (
-    <main className="min-h-screen bg-black">
-      {/* VIDEO PLAYER FULLSCREEN */}
-      <div className="relative w-full h-screen">
-        <video
-          ref={videoRef}
-          key={`${currentEpisode}-${quality}`}
-          src={videoUrl}
-          controls
-          autoPlay
-          onEnded={handleVideoEnded}
-          poster={currentEpisodeData?.chapterImg}
-          className="w-full h-full object-contain"
-        />
+    <main className="min-h-screen pt-20 px-4">
+      <div className="max-w-7xl mx-auto">
+        <Link
+          href={`/detail/${bookId}`}
+          className="flex items-center gap-2 mb-4"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          Kembali
+        </Link>
 
-        {/* HEADER OVERLAY */}
-        <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/80 to-transparent">
-          <div className="flex items-center justify-between">
-            <Link
-              href={`/detail/${bookId}`}
-              className="flex items-center gap-2 text-white hover:text-gray-300"
-            >
-              <ChevronLeft className="w-6 h-6" />
-              <span className="text-sm font-medium">Kembali</span>
-            </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+          {/* PLAYER */}
+          <div>
+            <div className="relative aspect-video bg-black rounded-xl overflow-hidden">
+              <video
+                ref={videoRef}
+                key={`${currentEpisode}-${quality}`}
+                src={videoUrl}
+                controls
+                autoPlay
+                onEnded={handleVideoEnded}
+                poster={currentEpisodeData?.chapterImg}
+                className="w-full h-full"
+              />
 
-            <button
-              onClick={() => setShowEpisodeList(true)}
-              className="text-white text-sm font-medium hover:text-gray-300"
-            >
-              Ep.{currentEpisode + 1} / {episodes.length} Episodes
-            </button>
+              <div className="absolute top-3 right-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-2 bg-black/60 rounded-lg">
+                      <Settings className="w-4 h-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {availableQualities.map((q) => (
+                      <DropdownMenuItem
+                        key={q}
+                        onClick={() => setQuality(q)}
+                      >
+                        {q}p
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            <h1 className="mt-4 font-bold text-xl">
+              {book.bookName} — Episode {currentEpisode + 1}
+            </h1>
           </div>
-        </div>
 
-        {/* QUALITY SETTINGS */}
-        <div className="absolute top-20 right-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="p-3 bg-black/60 rounded-lg text-white backdrop-blur-sm hover:bg-black/80">
-                <Settings className="w-5 h-5" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-gray-900 border-gray-800">
-              {availableQualities.map((q) => (
-                <DropdownMenuItem
-                  key={q}
-                  onClick={() => setQuality(q)}
-                  className="text-white hover:bg-gray-800"
+          {/* EPISODE LIST */}
+          <div className="bg-muted/30 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm">
+                Episode {startIndex + 1} - {endIndex}
+              </h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                  disabled={currentPage === 0}
+                  className="p-1.5 rounded-lg bg-muted disabled:opacity-50"
                 >
-                  {q}p {q === quality && "✓"}
-                </DropdownMenuItem>
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={currentPage >= totalPages - 1}
+                  className="p-1.5 rounded-lg bg-muted disabled:opacity-50"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-5 gap-2">
+              {currentPageEpisodes.map((ep) => (
+                <button
+                  key={ep.chapterId}
+                  onClick={() => handleEpisodeChange(ep.chapterIndex)}
+                  className={`rounded-lg aspect-square ${
+                    ep.chapterIndex === currentEpisode
+                      ? "bg-primary text-white"
+                      : "bg-muted"
+                  }`}
+                >
+                  {ep.chapterIndex + 1}
+                </button>
               ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* EPISODE LIST MODAL */}
-      {showEpisodeList && (
-        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-gray-900 rounded-2xl overflow-hidden">
-            {/* MODAL HEADER */}
-            <div className="relative p-6 border-b border-gray-800">
-              <div className="flex items-center gap-4">
-                <img
-                  src={currentEpisodeData?.chapterImg}
-                  alt={book.bookName}
-                  className="w-20 h-28 object-cover rounded-lg"
-                />
-                <div className="flex-1">
-                  <h2 className="text-white font-bold text-lg">{book.bookName}</h2>
-                  <p className="text-gray-400 text-sm mt-1">{episodes.length} episode</p>
-                </div>
-                <button
-                  onClick={() => setShowEpisodeList(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {/* TABS */}
-              <div className="flex gap-6 mt-6">
-                <button className="text-yellow-500 font-semibold pb-2 border-b-2 border-yellow-500">
-                  EPISODE
-                </button>
-                <button className="text-gray-400 font-semibold pb-2">
-                  DESKRIPSI
-                </button>
-              </div>
-            </div>
-
-            {/* PAGINATION */}
-            <div className="flex items-center justify-between px-6 py-3 bg-gray-800/50">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-                disabled={currentPage === 0}
-                className="text-white disabled:opacity-30 disabled:cursor-not-allowed hover:text-yellow-500"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <span className="text-white text-sm">
-                {startIndex + 1} - {endIndex} / {episodes.length}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
-                disabled={currentPage >= totalPages - 1}
-                className="text-white disabled:opacity-30 disabled:cursor-not-allowed hover:text-yellow-500"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* EPISODE GRID */}
-            <div className="p-6 max-h-96 overflow-y-auto">
-              <div className="grid grid-cols-5 gap-3">
-                {currentPageEpisodes.map((ep) => (
-                  <button
-                    key={ep.chapterId}
-                    onClick={() => handleEpisodeChange(ep.chapterIndex)}
-                    className={`aspect-square rounded-xl text-lg font-bold transition-all ${
-                      ep.chapterIndex === currentEpisode
-                        ? "bg-yellow-500 text-black"
-                        : "bg-gray-800 text-white hover:bg-gray-700"
-                    }`}
-                  >
-                    {ep.chapterIndex + 1}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
